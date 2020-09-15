@@ -1,5 +1,12 @@
 # Change Log
 ## Version 0.1
+### 09/13/2020
+- Added simple character and camera controls
+Created a first person and third person camera (toggle using 'c'). Movement of character changes based upon camera chosen. Third person needs somw work.
+-Added terrain and kill volume
+Set up basic terrain to be sculpted later. Attached kill volume, currently just logs if player exits trigger.
+
+
 ### 09/11/2020
 - Started Development
 Spent some time setting up the menu logic before development so testing restarts are much easier.
