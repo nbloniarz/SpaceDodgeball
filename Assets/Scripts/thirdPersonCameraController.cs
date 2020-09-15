@@ -4,43 +4,47 @@ using UnityEngine;
 
 public class thirdPersonCameraController : MonoBehaviour{
 
-	public float horzTurnSpeed = 2f;
-	public float vertTurnSpeed = 4f;
-	private GameObject parent;
-	private Vector3 offset;
-	public float verticalOffset = 4f;
-	public float distanceOffset = -6f;
-	public float minYHeight = 0.25f;
+	public float turnSpeed = 4f;
+	private GameObject parentPlayer;
+	private float yOffset = 4f;
+	private float zOffset = -6f;
 
-    // Start is called before the first frame update
-    void Start(){
-		offset = new Vector3(parent.transform.localPosition.x, parent.transform.localPosition.y + verticalOffset, parent.transform.localPosition.z + distanceOffset);
-		transform.position = offset;
-		transform.LookAt(parent.transform.position);
-	}
+	private float targetDistance;
+	private float rotX;
 
-    // Update is called once per frame
-    void LateUpdate()
-    {
-		if (GetComponent<Camera>().enabled) {
-			float x_rot = Input.GetAxis("Mouse X") * horzTurnSpeed;
-			float y_rot = Input.GetAxis("Mouse Y") * vertTurnSpeed;
-
-			Vector3 angles = transform.eulerAngles;
-			angles.z = 0;
-			transform.eulerAngles = angles;
-			transform.RotateAround(parent.transform.position, Vector3.up, x_rot);
-			transform.RotateAround(parent.transform.position, Vector3.right, y_rot);
-			if(transform.position.y < minYHeight) {
-				transform.position = new Vector3(transform.position.x, minYHeight, transform.position.z);
-			}
-			transform.LookAt(parent.transform.position);
-
-			//parent.transform.forward = transform.forward;
-		}
-    }
+	public float minTurnAngle = -85f;
+	public float maxTurnAngle = 0f;
 
 	private void Awake() {
-		parent = transform.parent.gameObject;
+		parentPlayer = transform.parent.GetChild(1).gameObject;
+		transform.position = new Vector3(parentPlayer.transform.position.x, parentPlayer.transform.position.y + yOffset, parentPlayer.transform.position.z + zOffset);
+		targetDistance = Vector3.Distance(transform.position, parentPlayer.transform.position);
 	}
+
+	private void Update() {
+		if (GetComponent<Camera>().enabled) {
+
+			if (GameManagerController.enableJoyCamera) {
+				float y = Input.GetAxis("Joy Y");
+				rotX += Input.GetAxis("Joy X");
+
+				transform.eulerAngles = new Vector3(rotX, transform.eulerAngles.y + y, 0);
+
+				transform.position = parentPlayer.transform.position - (transform.forward * targetDistance);
+
+			}
+			else {
+				float y = Input.GetAxis("Mouse X") * turnSpeed;
+				rotX += Input.GetAxis("Mouse Y") * turnSpeed;
+
+				rotX = Mathf.Clamp(rotX, minTurnAngle, maxTurnAngle);
+
+				transform.eulerAngles = new Vector3(-rotX, transform.eulerAngles.y + y, 0);
+
+				transform.position = parentPlayer.transform.position - (transform.forward * targetDistance);
+			}
+		}
+	}
+
+
 }

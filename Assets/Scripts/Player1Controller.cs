@@ -23,16 +23,11 @@ public class Player1Controller : MonoBehaviour {
 	// Start is called before the first frame update
 	void Start() {
 
+		Debug.Log(GameManagerController.numberOfPlayers);
+
 		//Sets up camera controls for player, makes thrid person default.
-		Camera[] camList = GetComponentsInChildren<Camera>();
-		foreach (Camera aCam in camList) {
-			if(aCam.name == "1st Person Camera") {
-				firstPersonCamera = aCam;
-			}
-			else {
-				thirdPersonCamera = aCam;
-			}
-		}
+		firstPersonCamera = GetComponentInChildren<Camera>();
+		thirdPersonCamera = transform.parent.GetChild(0).gameObject.GetComponent<Camera>();
 		isFirstPerson = false;
 		firstPersonCamera.enabled = false;
 		thirdPersonCamera.enabled = true;
@@ -76,6 +71,8 @@ public class Player1Controller : MonoBehaviour {
 			
 		}
 		else {
+
+		
 			float x = Input.GetAxisRaw("Horizontal");
 			float z = Input.GetAxisRaw("Vertical");
 			groundedPlayer = controller.isGrounded;
@@ -85,16 +82,25 @@ public class Player1Controller : MonoBehaviour {
 			}
 
 			Vector3 moveDirection = (thirdPersonCamera.transform.forward*z + thirdPersonCamera.transform.right * x) * playerSpeed * Time.deltaTime;
-			
+			Vector3 cameraDir = new Vector3(thirdPersonCamera.transform.forward.x*100, 0, thirdPersonCamera.transform.forward.z*100);
 			controller.Move(moveDirection);
+			
 			if (Input.GetButton("Jump") && groundedPlayer) {
 				playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
 			}
 
 			playerVelocity.y += gravityValue * Time.deltaTime;
 			controller.Move(playerVelocity * Time.deltaTime);
+			if (moveDirection != Vector3.zero) {
+				transform.forward = new Vector3(thirdPersonCamera.transform.forward.x, 0, thirdPersonCamera.transform.forward.z);
+
+			}
+			Debug.Log("CAMERA: " + thirdPersonCamera.transform.forward);
+			Debug.Log("MODEL:" + transform.forward);
 		}
 
+		
+		//Debug.Log(transform.forward);
 	}
 
 	/*Controls toggling between first person and third person camera for player characters */
@@ -119,6 +125,17 @@ public class Player1Controller : MonoBehaviour {
 		if(other.tag == "KillVolume") {
 			Debug.Log("LEFT KILL VOLUME");
 		}
+	}
+
+	public void ConfigureCameras(float width, float height, int playerNum) {
+		switch (playerNum) {
+			case 2:
+			default:
+				thirdPersonCamera.rect = new Rect(0, 0, width, height);
+				firstPersonCamera.rect = new Rect(0, 0, width, height);
+				break;
+		}
+		
 	}
 
 	/*

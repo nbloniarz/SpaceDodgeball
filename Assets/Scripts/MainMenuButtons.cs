@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenuButtons : MonoBehaviour {
 
@@ -9,8 +10,14 @@ public class MainMenuButtons : MonoBehaviour {
     private string mainGameScene = "";
     public GameObject loadingIndicator;
     public GameObject settingsUI;
+	public GameObject numberOfPlayers;
 
-    public void startLoadGame(string sceneName) {
+	private void Awake() {
+		numberOfPlayers = GameObject.FindWithTag("Player Count");
+		numberOfPlayers.GetComponent<Text>().text = GameManagerController.numberOfPlayers.ToString();
+	}
+
+	public void startLoadGame(string sceneName) {
         mainGameScene = sceneName;
         startLoad = true;
         loadingIndicator.SetActive(true);
@@ -38,4 +45,18 @@ public class MainMenuButtons : MonoBehaviour {
     public void hideSettings() {
         settingsUI.SetActive(false);
     }
+
+	public void IncreasePlayerCount() {
+		if(GameManagerController.numberOfPlayers < GameManagerController.maxPlayers) {
+			GameManagerController.numberOfPlayers += 1;
+			numberOfPlayers.GetComponent<Text>().text = GameManagerController.numberOfPlayers.ToString();
+		}
+	}
+
+	public void DecreasePlayerCount() {
+		if (GameManagerController.numberOfPlayers > 1) {
+			GameManagerController.numberOfPlayers -= 1;
+			numberOfPlayers.GetComponent<Text>().text = GameManagerController.numberOfPlayers.ToString();
+		}
+	}
 }
