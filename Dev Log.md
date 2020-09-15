@@ -1,5 +1,15 @@
 # Change Log
 ## Version 0.1
+### 09/14/2020
+- The boi rotates
+The player character now rotates to face the direction of movement. Still has kinks but progress is progress
+- Joystick input
+Because mouse controls were lame. Can be toggled on and off in game conroller script
+- Local multiplayer
+Began to set up requirements for local multiplayer. (number of players on the menu). Need to figure out split screen vs top down when local multiplayer.
+-- Thinking top down only for local multiplayer.
+-- Top down, first person, and third person for single player networked matches.
+
 ### 09/13/2020
 - Added simple character and camera controls
 Created a first person and third person camera (toggle using 'c'). Movement of character changes based upon camera chosen. Third person needs somw work.
